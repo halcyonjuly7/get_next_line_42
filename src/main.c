@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <libft.h>
 #include <string.h>
-#include <printf.h>
+#include <stdio.h>
+
+
 #include "get_next_line.h"
 
 int main(int argc, char **argv)
@@ -16,13 +18,16 @@ int main(int argc, char **argv)
 
 		int fd = open(argv[1], O_RDONLY);
 		char *line = ft_strnew(300);
-		int resp;
+		int resp = 0;
 		while ((resp = get_next_line(fd, &line)))
 		{
 
 			printf("%s\n", line);
 			ft_strclr(line);
 		}
+		printf("%s", line);
+		close(fd);
+		ft_strdel(&line);
 //		ft_memdel((void *)&line);
 	}
 	return (0);

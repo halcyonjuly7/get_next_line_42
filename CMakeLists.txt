@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(CMAKE_BUILD_TYPE  Debug)
+#set(CMAKE_BUILD_TYPE  Debug)
 set(CMAKE_C_FLAGS "-Wall -Wextra -Werror")
 set(LIBFT_INCLUDE_DIR libs/libft)
 set(FILLIT_INCLUDE_DIR includes/)

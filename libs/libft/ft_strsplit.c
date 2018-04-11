@@ -39,12 +39,11 @@ static char	*ft_strndup(int start, int end, char const *str)
 	return (substr);
 }
 
-#	define INITIALIZE index=0,start=0,end=0,splitted_index=0
+#	define INITIALIZE index=0,start=0,splitted_index=0
 
 char		**ft_strsplit(char const *s, char c)
 {
 	int		start;
-	int		end;
 	int		index;
 	int		splitted_index;
 	char	**splitted;
