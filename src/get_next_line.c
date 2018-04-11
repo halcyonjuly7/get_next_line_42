@@ -42,15 +42,14 @@ void arr_resize(t_arr *arr, int new_size)
 
 int get_next_line(const int fd, char **line)
 {
-    char    buffer[BUFF_SIZE + 1];
+    char    buffer[BUFF_SIZE+1];
     t_arr   local_buffer;
     int     index;
     int     cache_ind;
 	char	*concat;
     static  t_arr *cache;
 	
-	local_buffer.size = BUFF_SIZE;
-	local_buffer.contents = 0;
+
     if(!cache || !cache->buffer)
     {
 		cache = malloc(sizeof(t_arr));
@@ -60,8 +59,7 @@ int get_next_line(const int fd, char **line)
         cache->size = BUFF_SIZE;
         cache->contents = 0;
     }
-    local_buffer.buffer = ft_strnew(BUFF_SIZE);
-	if (!local_buffer.buffer)
+    if (!(local_buffer.buffer = ft_strnew(BUFF_SIZE)))
 		return (0);
 	local_buffer.size = BUFF_SIZE;
 	local_buffer.contents = 0;
@@ -77,10 +75,10 @@ int get_next_line(const int fd, char **line)
 		ft_strdel(&local_buffer.buffer);
         return (1);
     }
-    while (read(fd, buffer, BUFF_SIZE))
+    while (read(fd, buffer, BUFF_SIZE+1))
     {
         index = 0;
-        while (index < BUFF_SIZE)
+        while (buffer[index])
         {
             if (buffer[index] == '\n')
             {
