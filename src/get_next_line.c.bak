@@ -1,0 +1,161 @@
+//
+// Created by Halcyon abrah Ramirez on 4/7/18.
+//
+
+#include "get_next_line.h"
+# include <unistd.h>
+#include <libft.h>
+
+void    enqueue(char *str, t_q* q)
+{
+    t_node  *new_node = malloc(sizeof(t_node));
+	new_node->buffer = str;
+    new_node->next = NULL;
+    if (!q->end)
+    {
+        q->head = new_node;
+        q->end = new_node;
+		return;
+    }
+    q->end->next = new_node;
+    q->end = new_node;
+}
+
+
+t_node    *dequeue(t_q  *q)
+{
+    t_node *temp;
+
+    if (q->head == NULL)
+        return (NULL);
+    temp = q->head;
+    q->head = q->head->next;
+    if (q->head == NULL)
+        q->end = NULL;
+    return temp;
+
+}
+
+void arr_insert(t_arr *arr, char new_char)
+{
+    if(arr->size == arr->contents)
+        arr_resize(arr, arr->size * 2);
+    arr->buffer[arr->contents] = new_char;
+    arr->contents++;
+
+
+}
+void arr_resize(t_arr *arr, int new_size)
+{
+    int index;
+    char *new_str;
+
+    index = 0;
+    new_str = ft_strnew(new_size);
+
+    while(arr->buffer[index])
+	{
+		new_str[index] = arr->buffer[index];
+		index++;
+	}
+    new_str[index] = '\0';
+    ft_memdel((void *)&arr->buffer);
+	arr->buffer = new_str;
+
+}
+
+
+
+int get_next_line(const int fd, char **line)
+{
+    char    *buffer;
+	t_arr	temp;
+
+    int     splitted_index;
+    char    **splitted;
+    t_node  *node;
+    static  t_q *q;
+
+    buffer = ft_strnew(BUFF_SIZE);
+	if (!q)
+	{
+		q = malloc(sizeof(t_q));
+		q->head = NULL;
+		q->end = NULL;
+	}
+	node = dequeue(q);
+//    if (node != NULL)
+//    {
+//        *line = node->buffer;
+//        return (1);
+//    }
+
+
+	temp.buffer = ft_strnew(BUFF_SIZE);
+	temp.size = BUFF_SIZE;
+	temp.contents = 0;
+	char *hello = buffer;
+
+    while (read(fd, buffer, BUFF_SIZE))
+    {
+		while (*buffer)
+		{
+			if (*buffer == '\n')
+			{
+				buffer++;
+				splitted_index = 0;
+//				splitted = ft_strsplit(buffer, '\n');
+				*line = ft_strcat(temp.buffer, !node ? "": node->buffer);
+				while (splitted[splitted_index])
+					enqueue(buffer, q);
+				
+//					enqueue(splitted[splitted_index++], q);
+				free(temp.buffer);
+
+				return (1);
+			} else
+				arr_insert(&temp, *buffer);
+			buffer++;
+		}
+		ft_strclr(buffer);
+		buffer = hello;
+    }
+	return (0);
+}
+
+
+
+//int get_next_line(const int fd, char **line)
+//{
+//    char    *buffer;
+//    int     index;
+//    static  t_arr arr;
+//
+//
+//    if(!arr.buffer)
+//    {
+//        arr.buffer = ft_strnew(BUFF_SIZE);
+//        arr.size = BUFF_SIZE;
+//        arr.contents = 0;
+//    }
+//    buffer = ft_strnew(BUFF_SIZE);
+//    while (read(fd, buffer, BUFF_SIZE))
+//    {
+//        index = 0;
+//        while (buffer[index])
+//        {
+//            if (buffer[index] == '\n')
+//            {
+//                ft_strcpy(*line, arr.buffer);
+//                ft_strclr(arr.buffer);
+//				arr.contents = 0;
+//				return (0);
+//            }
+//            else
+//                arr_insert(&arr, buffer[index]);
+//			index++;
+//        }
+//    }
+//    return (0);
+//}
+
