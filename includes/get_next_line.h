@@ -12,7 +12,7 @@
 
 #ifndef GET_NEXT_LINE_GET_NEXT_LINE_H
 #define GET_NEXT_LINE_GET_NEXT_LINE_H
-#define BUFF_SIZE 3
+#define BUFF_SIZE 1
 
 int get_next_line(const int fd, char **line);
 typedef struct		s_array
@@ -20,22 +20,17 @@ typedef struct		s_array
 	int				size;
 	int				contents;
 	char 			*buffer;
+	char			*start;
+	int 			offset;
 }					t_arr;
 
-typedef	struct		s_node {
-	char			*buffer;
-	int				cont_size;
-	struct s_node	*next;
-}					t_node;
+typedef struct		s_cache
+{
+	int				current;
+	int				size;
+	char 			**lines;
+}					t_cache;
 
-typedef struct		s_q {
-	t_node			*head;
-	t_node			*end;
-}					t_q;
-
-
-void				enqueue(char *str, t_q* q);
-t_node				*dequeue(t_q* q);
 void				arr_insert(t_arr *arr, char new_char);
 void				arr_resize(t_arr *arr, int new_size);
 

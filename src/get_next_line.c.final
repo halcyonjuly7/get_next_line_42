@@ -48,9 +48,6 @@ int get_next_line(const int fd, char **line)
 	int 	read_file;
     static  t_arr *cache;
 
-	if (fd < 0 || read(fd, 0, 0))
-		return (-1);
-
     if(!cache)
     {
 		if (!(cache = malloc(sizeof(t_arr))))
@@ -63,26 +60,40 @@ int get_next_line(const int fd, char **line)
 			return (-1);
     }
 
+
     if (!(local_buffer.buffer = ft_strnew(BUFF_SIZE)))
-		return (-1);
+		return (0);
 	local_buffer.size = BUFF_SIZE;
 	local_buffer.contents = 0;
-	if (ft_strchr(cache->buffer, '\n'))
+	if (ft_strchr(&(cache->buffer[cache->offset]), '\n'))
 	{
-		char *cpy;
 		cache_ind = 0;
-		while(cache->buffer[cache_ind] != '\n')
+		while(cache->buffer[cache_ind + cache->offset] != '\n')
 			cache_ind++;
-		*line = ft_strsub(cache->buffer, 0, cache_ind);
-		cpy = cache->buffer;
-		cache->buffer = ft_strdup(&(cache->buffer[cache_ind+1]));
-		cache->contents = ft_strlen(&(cache->buffer[cache_ind]));
-		cache->size = cache->contents;
-		ft_strdel(&cpy);
+		*line = ft_strsub(cache->buffer, cache->offset, cache_ind);
+		cache->offset = cache->offset + cache_ind+1;
 		ft_strdel(&local_buffer.buffer);
 		return (1);
 	}
 
+//    if (ft_strchr(cache->buffer, '\n'))
+//    {
+//        cache_ind = 0;
+//		if(!cache->start)
+//			cache->start = cache->buffer;
+//        while(cache->buffer[cache_ind + cache->offset] != '\n')
+//            cache_ind++;
+//		cache->offset = cache_ind+1;
+//		char *temp = ft_strnew(cache_ind);
+//        ft_strncpy(temp, cache->buffer, cache_ind);
+//		*line = ft_strdup(temp);
+//		free(temp);
+//        while(*cache->buffer != '\n')
+//            cache->buffer++;
+//		cache->buffer++;
+//		ft_strdel(&local_buffer.buffer);
+//        return (1);
+//    }
     while ((read_file = read(fd, buffer, BUFF_SIZE)) > 0)
     {
         index = 0;
@@ -94,17 +105,18 @@ int get_next_line(const int fd, char **line)
 				index++;
                 if (cache->contents != 0)
                 {
-					*line = ft_strjoin(cache->buffer,
-									   local_buffer.buffer);
+					*line = ft_strjoin(&(cache->buffer[cache->offset]),
+									   local_buffer
+							.buffer);
 					ft_strclr(cache->buffer);
 					cache->contents = 0;
 					cache->offset = 0;
                 }
 				else
 					*line = ft_strdup(local_buffer.buffer);
-				ft_strdel(&local_buffer.buffer);
                 while (buffer[index])
 					arr_insert(cache, buffer[index++]);
+				ft_strdel(&local_buffer.buffer);
 				return (1);
             }
             else
@@ -113,11 +125,11 @@ int get_next_line(const int fd, char **line)
         }
 		ft_strclr(buffer);
     }
-	if(local_buffer.contents != 0 || cache->contents !=0)
+	if(local_buffer.contents != 0 || cache->buffer[cache->offset])
 	{
-		*line = ft_strjoin(cache->buffer, local_buffer.buffer);
-		cache->contents = 0;
+		*line = ft_strjoin(&(cache->buffer[cache->offset]), local_buffer.buffer);
 		ft_strdel(&local_buffer.buffer);
+		cache->offset = cache->offset + ft_strlen(&(cache->buffer[cache->offset]));
 		return (1);
 	}
 	ft_strdel(&local_buffer.buffer);

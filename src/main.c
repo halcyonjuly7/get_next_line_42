@@ -17,15 +17,14 @@ int main(int argc, char **argv)
 	{
 
 		int fd = open(argv[1], O_RDONLY);
-		char *line = ft_strnew(300);
+		char *line = NULL;
 		int resp = 0;
 		while ((resp = get_next_line(fd, &line)))
 		{
 
 			printf("%s\n", line);
-			ft_strclr(line);
+			ft_strdel(&line);
 		}
-		printf("%s", line);
 		close(fd);
 		ft_strdel(&line);
 //		ft_memdel((void *)&line);
